@@ -17,6 +17,7 @@ var (
 	LogGroup    string
 	LogStream   string
 	LogMessage  string
+	Num         int
 )
 
 func GetCredential(file string, profile string, region string) *session.Session {
@@ -33,7 +34,11 @@ func GetCredential(file string, profile string, region string) *session.Session 
 	return sess
 }
 
-func Loop() {}
+func Loop(n int, group string, stream string, message string, sess *session.Session) {
+	for i := 0; i < n; i++ {
+		PutLog(group, stream, message, sess)
+	}
+}
 
 func PutLog(group string, stream string, message string, sess *session.Session) {
 	svc := cloudwatchlogs.New(sess)
@@ -94,7 +99,8 @@ func main() {
 	LogGroup = "test2"
 	LogStream = "go"
 	LogMessage = "hello go"
+	Num = 2
 	fmt.Println(LogMessage)
 	sess := GetCredential("", Profile, Region)
-	PutLog(LogGroup, LogStream, LogMessage, sess)
+	Loop(Num, LogGroup, LogStream, LogMessage, sess)
 }
